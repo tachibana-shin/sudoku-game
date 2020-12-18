@@ -20,7 +20,8 @@ export default new Vuetify({
         error: colors.red.accent3,
         lighten: "#f3f8fc",
         "white-real": "#fff",
-        "black-real": "#000"
+        "black-real": "#000",
+        "white-f5": "#f5f5f5"
       },
       dark: {
         primary: colors.blue.lighten3,

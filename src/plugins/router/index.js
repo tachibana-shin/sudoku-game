@@ -41,6 +41,20 @@ export default new Router({
         bottomNavigator: true,
         challenges: true
       }
+    },
+    {
+      path: "/reward",
+      component: () => import("@/pages/Reward"),
+      meta: {
+        bottomNavigator: false
+      }
+    },
+    {
+      path: "/statistical",
+      component: () => import("@/pages/Statistical"),
+      meta: {
+        bottomNavigator: true
+      }
     }
   ],
   scrollBehavior(from, to, saved) {

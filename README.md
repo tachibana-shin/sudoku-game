@@ -1,6 +1,6 @@
 # sudoku-game
 
-> A Vue.js project
+> Sudoku-game is a project game writing vuejs and vuetify.
 
 ## Build Setup
 

@@ -1,6 +1,6 @@
 <template>
-  <v-card class="wrap fill-height" outlined>
-    <v-app-bar class="border-0 shadow-none" app flat fixed color="lighten">
+  <v-card class="wrap fill-height" flat>
+    <v-app-bar app flat fixed color="lighten">
       <v-btn icon @click="hasHistory ? $router.back() : $router.replace('/')">
         <v-icon> mdi-arrow-left </v-icon>
       </v-btn>
@@ -40,11 +40,16 @@
     </v-app-bar>
     <v-card-text class="card-text">
       <div class="status d-flex align-center justify-space-between">
-        <span> Chuyên gia </span>
+        <span>
+          <v-icon size="1em" v-if="isChallenges">
+            mdi-trophy-outline
+          </v-icon>
+          {{ storage.typeName }}
+        </span>
         <span v-if="$store.state.settings.config.DEBUG"> Số lỗi {{ countWrong }}/3 </span>
         <span v-if="$store.state.settings.config.SHOW_POINT">
           <v-icon size="1em"> mdi-star-outline </v-icon>
-          0
+          {{ point }}
         </span>
         <span v-if="$store.state.settings.config.TIMER">
           <v-icon size="1em"> mdi-clock-outline </v-icon>
@@ -110,7 +115,7 @@
                   <small class="text" v-show="$logs.mapSudoku.size > 0"> {{ $logs.mapSudoku.size }} </small>
                 </span>
               </v-btn>
-              <v-btn class="btn" @click="removeItemSelect" :disabled="paused || !itemSelect || itemSelect.readOnly || itemSelect.valueNow == null">
+              <v-btn class="btn" @click="removeItemSelect" :disabled="paused || !itemSelect || itemSelect.readOnly || (itemSelect.valueNow == null && itemSelect.notes.length == 0)">
                 <span> Tẩy </span>
                 <v-icon>mdi-eraser</v-icon>
               </v-btn>
@@ -144,7 +149,7 @@
           <v-card-text class="text-center">
             {{ alert.message }}
             <div class="mt-5">
-              <v-btn v-for="({ text, attrs, click }, index) in alert.buttons" :key="index" v-bind="attrs" @click="click"> {{ text }} </v-btn>
+              <v-btn v-for="({ text, attrs, click = () => {} }, index) in alert.buttons" :key="index" v-bind="attrs" @click="click"> {{ text }} </v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -183,7 +188,10 @@
             <v-btn color="blue" block dark class="mt-3" @click="playGame"> Tiếp tục </v-btn>
           </v-card-text>
         </v-card>
-      </v-dialog>
+      </v-dialog><!--
+      <v-dialog v-model="success" fullscreen hide-overlay>
+        
+      </v-dialog>-->
     </v-card-text>
   </v-card>
 </template>
@@ -234,7 +242,6 @@
       sheet: false,
       dialog: false,
       paused: true,
-      mapSudoku: null,
       alert: null,
       alertPauseGame: false,
       optTheme: false
@@ -247,25 +254,16 @@
       }
     },
     watch: {
-      "$store.state.playground.mapSudoku": {
-        handler(newVal) {
-          this.mapSudoku = cloneObject(newVal)
-        },
-        immediate: true,
-        deep: true
-      },
-      mapSudoku: {
-        handler(newVal) {
-          if (JSON.stringify(newVal) != JSON.stringify(this.$store.state.playground.mapSudoku)) {
-            this.$store.commit("setMapSudoku", newVal)
-          }
-        },
-        deep: true
-      },
       isComplete: {
         handler(newVal) {
           if (newVal) {
             this.endGame(true)
+            this.commit("saveData", {
+              id: this.storage.id,
+              time: this.storage.time,
+              typeName: this.storage.typeName,
+              point: this.point
+            })
           }
         },
         immediate: true
@@ -280,56 +278,64 @@
       }
     },
     computed: {
-      /*
-            mapSudoku: {
-              get() {
-                return this.$store.state.playground.mapSudoku.map(item => [...item])
-              },
-              set(e) {
-                return this.$store.commit("setMapSudoku", e)
-              }
-            },*/
+      mapSudoku() {
+        return this.storage.mapSudoku
+      },
+      point() {
+        return this.mapSudoku && 10 * this.mapSudoku.reduce((lastPoint, row) => lastPoint + row.reduce((lastPoint, item) => {
+          if (item.value == item.valueNow) {
+            lastPoint++
+          }
+          return lastPoint
+        }, 0), 0)
+      },
+      isChallenges() {
+        return !!this.$route.meta.challenges
+      },
+      storage() {
+        return this.isChallenges ? this.$store.state.playgroundChallenges.config : this.$store.state.playground.config
+      },
       typeName() {
-        return this.$store.state.playground.typeName
+        return this.storage.typeName
       },
       itemHoverOffset: {
         get() {
-          return this.$store.state.playground.itemHoverOffset
+          return this.storage.itemHoverOffset
         },
         set(e) {
-          return this.$store.commit("setItemHoverOffset", e)
+          return this.commit("setItemHoverOffset", e)
         }
       },
       modeNote: {
         get() {
-          return this.$store.state.playground.modeNote
+          return this.storage.modeNote
         },
         set(e) {
-          return this.$store.commit("setModeNote", e)
+          return this.commit("setModeNote", e)
         }
       },
       countSuggest: {
         get() {
-          return this.$store.state.playground.countSuggest
+          return this.storage.countSuggest
         },
         set(e) {
-          return this.$store.commit("setCountSuggest", e)
+          return this.commit("setCountSuggest", e)
         }
       },
       countWrong: {
         get() {
-          return this.$store.state.playground.countWrong
+          return this.storage.countWrong
         },
         set(e) {
-          return this.$store.commit("setCountWrong", e)
+          return this.commit("setCountWrong", e)
         }
       },
       time: {
         get() {
-          return this.$store.state.playground.time
+          return this.storage.time
         },
         set(e) {
-          return this.$store.commit("setTime", e)
+          return this.commit("setTime", e)
         }
       },
 
@@ -341,6 +347,9 @@
       }
     },
     methods: {
+      commit(type, payload) {
+        return this.$store.commit(`${this.isChallenges ? "playgroundChallenges" : "playground"}/${type}`, payload)
+      },
       itemOfRow(x, y) {
         return this.itemHoverOffset && this.itemHoverOffset.y == y
       },
@@ -369,21 +378,51 @@
       inputValue(value) {
         if (this.itemSelect && !this.itemSelect.readOnly) {
           if (this.modeNote) {
-            this.itemSelect.valueNow = null
+            this.commit("setItemInMapSudoku", {
+              ...this.itemHoverOffset,
+              payload: {
+                valueNow: null
+              }
+            })
             const indexThisValue = this.itemSelect.notes.indexOf(value)
             if (indexThisValue > -1) {
-              this.itemSelect.notes.splice(indexThisValue, 1)
+              this.commit("setItemInMapSudoku", {
+                ...this.itemHoverOffset,
+                payload: {
+                  notes: this.itemSelect.notes.filter(item => item != value)
+                }
+              })
             } else {
-              this.itemSelect.notes.push(value)
+              this.commit("setItemInMapSudoku", {
+                ...this.itemHoverOffset,
+                payload: {
+                  notes: [...this.itemSelect.notes, value]
+                }
+              })
             }
           } else {
             if (this.$store.state.settings.config.AUTO_RM_NOTE) {
-              this.itemSelect.notes = []
+              this.commit("setItemInMapSudoku", {
+                ...this.itemHoverOffset,
+                payload: {
+                  notes: []
+                }
+              })
             }
             if (this.itemSelect.valueNow == value) {
-              this.itemSelect.valueNow = null
+              this.commit("setItemInMapSudoku", {
+                ...this.itemHoverOffset,
+                payload: {
+                  valueNow: null
+                }
+              })
             } else {
-              this.itemSelect.valueNow = value
+              this.commit("setItemInMapSudoku", {
+                ...this.itemHoverOffset,
+                payload: {
+                  valueNow: value
+                }
+              })
               if (this.itemSelect.valueNow != this.itemSelect.value) {
                 this.countWrong++
               }
@@ -396,8 +435,13 @@
       },
       removeItemSelect() {
         if (this.itemSelect && !this.itemSelect.readOnly) {
-          this.itemSelect.valueNow = null
-          this.itemSelect.notes = []
+          this.commit("setItemInMapSudoku", {
+            ...this.itemHoverOffset,
+            payload: {
+              valueNow: null,
+              notes: []
+            }
+          })
         }
       },
       addSuggest() {

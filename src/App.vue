@@ -12,7 +12,7 @@
         <span>Thử thách hàng ngày</span>
         <v-icon>mdi-calendar-plus</v-icon>
       </v-btn>
-      <v-btn to="/404">
+      <v-btn to="/statistical">
         <span>Thống kê</span>
         <v-icon>mdi-chart-bar</v-icon>
       </v-btn>

@@ -19,7 +19,7 @@
         {
           text: "Cài đặt",
           to: "/settings"
-        },
+        }/*,
         {
           text: "Luật chơi Sudoku",
           to: "/"
@@ -31,7 +31,7 @@
         {
           text: "Giới thiệu trò chơi",
           to: "/"
-        }
+        }*/
       ]
     })
   }

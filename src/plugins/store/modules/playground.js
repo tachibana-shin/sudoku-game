@@ -1,42 +1,61 @@
-export default {
+export default () => ({
+  namespaced: true,
   state: {
-    mapSudoku: null,
-    itemHoverOffset: null,
-    modeNote: false,
-    countSuggest: 5,
-    countWrong: 0,
-    time: 0,
-    
-    typeName: "Chuyên gia"
+    config: {
+      mapSudoku: null,
+      itemHoverOffset: null,
+      modeNote: false,
+      countSuggest: 5,
+      countWrong: 0,
+      time: 0,
+      id: -1,
+      typeName: ""
+    },
+    history: []
   },
   mutations: {
+    "saveData"({ history }, payload) {
+      if (!history.find(item => item.id == payload.id)) {
+        history.push(payload)
+      }
+    },
+    "setItemInMapSudoku"({ config }, { x, y, payload }) {
+      Object.assign(config.mapSudoku[y][x], payload)
+    },
     "resetPlayground"(state) {
-      Object.assign(state, {
+      state.config = {
         mapSudoku: null,
         itemHoverOffset: null,
         modeNote: false,
         countSuggest: 5,
         countWrong: 0,
-        time: 0
-      })
+        time: 0,
+        typeName: ""
+      }
     },
-    "setMapSudoku"(state, payload) {
-      state.mapSudoku = payload
+    "setPlayground"(state, payload) {
+      state.config = {
+        ...state.config,
+        ...payload
+      }
     },
-    "setItemHoverOffset"(state, payload) {
-      state.itemHoverOffset = payload
+    "setMapSudoku"({ config }, payload) {
+      config.mapSudoku = payload
     },
-    "setModeNote"(state, payload) {
-      state.modeNote = payload
+    "setItemHoverOffset"({ config }, payload) {
+      config.itemHoverOffset = payload
     },
-    "setCountSuggest"(state, payload) {
-      state.countSuggest = payload
+    "setModeNote"({ config }, payload) {
+      config.modeNote = payload
     },
-    "setCountWrong"(state, payload) {
-      state.countWrong = payload
+    "setCountSuggest"({ config }, payload) {
+      config.countSuggest = payload
     },
-    "setTime"(state, payload) {
-      state.time = payload
+    "setCountWrong"({ config }, payload) {
+      config.countWrong = payload
+    },
+    "setTime"(state, time) {
+      state.config.time = time
     }
   }
-};
+});

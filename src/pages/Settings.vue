@@ -1,6 +1,6 @@
 <template>
-  <v-card class="wrap fill-height" outlined>
-    <v-app-bar class="border-0 shadow-none appbar" app fixed>
+  <v-card class="wrap fill-height" flat.>
+    <v-app-bar app fixed>
       <v-btn icon @click="hasHistory ? $router.back() : $router.replace('/')">
         <v-icon>
           mdi-arrow-left
@@ -15,7 +15,7 @@
         <template v-for="(item, index) in items">
           <v-divider inset v-if="index" />
           <v-subheader inset> {{ item.title }} </v-subheader>
-          <v-list-item v-for="(item, index) in item.items" :key="item.value" :three-line="!!item.sub" :disabled="item.value == 'AUTO_CHECK_BUG' && $store.state.settings.config.DEBUG" @click="$store.commit(`setSettings`, { [item.value]: !$store.state.settings.config[ item.value ] }) ">
+          <v-list-item v-for="(item, index) in item.items" :key="item.value" :three-line="!!item.sub" :disabled="item.value == 'AUTO_CHECK_BUG' && $store.state.settings.config.DEBUG" @click="$store.commit(`settings/setSettings`, { [item.value]: !$store.state.settings.config[ item.value ] }) ">
             <v-list-item-icon>
               <v-icon> {{ item.icon }} </v-icon>
             </v-list-item-icon>
@@ -24,7 +24,7 @@
               <v-list-item-subtitle v-if="item.sub"> {{ item.sub }} </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch color="blue" inset :input-value="!!$store.state.settings.config[item.value]" @change="$store.commit(`setSettings`, { [item.value]: $event })" />
+              <v-switch color="blue" inset :input-value="!!$store.state.settings.config[item.value]" @change="$store.commit(`settings/setSettings`, { [item.value]: $event })" />
             </v-list-item-action>
           </v-list-item>
         </template>

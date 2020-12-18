@@ -1,9 +1,9 @@
 <template>
-  <v-card class="wrap" outlined>
-    <v-app-bar class="border-0 shadow-none appbar" app fixed color="blue" dark>
+  <v-card class="wrap" flat>
+    <v-app-bar app fixed color="blue" dark>
       <v-toolbar-title> Thử thách hảng ngày </v-toolbar-title>
       <v-spacer />
-      <v-btn icon>
+      <v-btn icon to="/reward">
         <v-icon> mdi-trophy </v-icon>
       </v-btn>
     </v-app-bar>
@@ -15,10 +15,9 @@
           <img class="bg-3" :src="require('@/assets/rays_circle_dark_1_5x.png')" />
           <img class="bg-4" :src="require('@/assets/rays_circle_dark_2_5x.png')" />
         </div>
-        <h2 class="text--h5"> Tháng 12 2020 </h2>
         <img class="cup" :src="cupImage">
       </div>
-      <v-date-picker :allowed-dates="filterDate" class="mx-auto" :min="`${now.year}-01-01`" :max="`${now.year}-12-31`" v-model="date" no-title full-width reactive :locale="$store.state.lang" :picker-date.sync="picker"></v-date-picker>
+      <v-date-picker :allowed-dates="filterDate" class="mx-auto" :min="`${now.year}-01-01`" :max="`${now.year}-12-31`" v-model="date" no-title full-width reactive :locale="$store.state.system.lang" :picker-date.sync="picker"></v-date-picker>
       <div class="play-btn">
         <v-btn color="blue" block dark large @click="playChallenges">
           Chơi
@@ -53,6 +52,8 @@
     )
   }
 
+  import generateNewMapSudoku from "@/js/generateNewMapSudoku.js"
+
   export default {
     $cupsBase64,
     data() {
@@ -74,20 +75,25 @@
 
         return new Date(`${month}/${day}/${year}`).getTime() <= new Date(`${this.now.month}/${this.now.day}/${this.now.year}`).getTime()
       },
-      playChallenges() {
-        this.$store.commit("setPlaygroundChallengesTaskNow", this.date)
+      async newGame(level) {
+        this.$store.commit("playgroundChallenges/resetPlayground")
+        this.$store.commit("playgroundChallenges/setPlayground", {
+          mapSudoku: generateNewMapSudoku(level),
+          typeName: this.date,
+          id: await this.$store.dispatch("system/uuid")
+        })
+
         this.$router.push("/playground-challenges")
+      },
+      playChallenges() {
+        this.newGame(58)
       }
     }
   }
 </script>
 <style lang="scss" scoped>
   .wrap {
-    border: 0;
-
-    .appbar {
-      z-index: 7;
-    }
+    z-index: 0;
 
     .card-text {
       .header {
@@ -103,6 +109,7 @@
           overflow: hidden;
           top: 0;
           left: 0;
+          z-index: 0;
 
           * {
             position: absolute;
@@ -157,7 +164,6 @@
           max-height: 200px;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 6;
         }
       }
 

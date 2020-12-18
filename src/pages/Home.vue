@@ -1,9 +1,9 @@
 <template>
-  <v-card class="wrap fill-height" outlined color="lighten">
-    <v-app-bar class="border-0 shadow-none appbar" app flat fixed color="lighten">
+  <v-card flat color="lighten" class="wrap">
+    <v-app-bar app flat fixed color="lighten">
       <v-spacer />
       <v-spacer />
-      <v-btn icon>
+      <v-btn icon to="/reward">
         <v-icon> mdi-trophy </v-icon>
       </v-btn>
       <app-bar-menu />
@@ -12,13 +12,13 @@
       <v-card class="mx-auto challenges-days" width="160px" color="white">
         <v-img class="mx-auto" width="35px" height="35px" :src="require('@/assets/cal-star.png')" />
         <p class="v-title"> Thử thách hàng ngày </p>
-        <p class="v-subtitle"> Tháng 12 14</p>
-        <v-btn class="blue--text play" outlined> Chơi </v-btn>
+        <p class="v-subtitle"> Tháng {{ new Date().getMonth() + 1 }} {{ new Date().getDate() }} </p>
+        <v-btn class="blue--text play" outlined to="/playground"> Chơi </v-btn>
       </v-card>
       <h1 class="title text-h4 text-center dark--text"> Sudoku.com </h1>
       <div class="btns">
-        <v-btn class="item" color="blue" dark block large to="/playground">
-          <div class="text-center" v-if="playing">
+        <v-btn class="item" color="blue" dark block large to="/playground" v-if="playing">
+          <div class="text-center">
             Tiếp tục trò chơi
             <small class="d-block font-weight-normal grey--text text--lighten-3 text-capitalize">
               <v-icon size="1em">
