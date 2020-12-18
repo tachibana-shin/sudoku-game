@@ -3,29 +3,22 @@
     <v-main>
       <router-view />
     </v-main>
-    <v-bottom-navigation :value="value" color="blue" grow shift fixed v-if="$route.meta.bottomNavigator">
-      <v-btn>
+    <v-bottom-navigation color="blue" grow shift fixed v-if="$route.meta.bottomNavigator" app>
+      <v-btn to="/">
         <span> Trang chủ </span>
         <v-icon>mdi-home</v-icon>
       </v-btn>
-      <v-btn>
+      <v-btn to="/challenges">
         <span>Thử thách hàng ngày</span>
         <v-icon>mdi-calendar-plus</v-icon>
       </v-btn>
-      <v-btn>
+      <v-btn to="/404">
         <span>Thống kê</span>
         <v-icon>mdi-chart-bar</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-app>
 </template>
-<script>
-  export default {
-    data: () => ({
-      value: 0
-    })
-  }
-</script>
 <style lang="scss">
   #app {
     p {

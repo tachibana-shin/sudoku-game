@@ -27,8 +27,8 @@
             </v-row>
           </v-card-text>
           <v-card-actions>
-            <v-spacer/>
-            <v-spacer/>
+            <v-spacer />
+            <v-spacer />
             <v-btn text color="blue" @click="optTheme = false"> OK </v-btn>
           </v-card-actions>
         </v-card>

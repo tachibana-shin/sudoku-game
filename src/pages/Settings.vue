@@ -1,6 +1,6 @@
 <template>
   <v-card class="wrap fill-height" outlined>
-    <v-app-bar class="border-0 shadow-none appbar" app flat fixed>
+    <v-app-bar class="border-0 shadow-none appbar" app fixed>
       <v-btn icon @click="hasHistory ? $router.back() : $router.replace('/')">
         <v-icon>
           mdi-arrow-left

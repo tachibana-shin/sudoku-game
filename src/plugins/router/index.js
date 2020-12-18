@@ -33,6 +33,14 @@ export default new Router({
       meta: {
         bottomNavigator: true
       }
+    },
+    {
+      path: "/playground-challenges",
+      component: () => import("@/pages/Playground"),
+      meta: {
+        bottomNavigator: true,
+        challenges: true
+      }
     }
   ],
   scrollBehavior(from, to, saved) {
